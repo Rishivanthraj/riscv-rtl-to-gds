@@ -1,0 +1,27 @@
+verilog_defaults -D SYNTHESIS
+
+read_verilog ../src/alu.v
+read_verilog ../src/register_file.v
+read_verilog ../src/pc.v
+read_verilog ../src/decoder.v
+read_verilog ../src/control_unit.v
+read_verilog ../src/immediate_generator.v
+read_verilog ../src/branch_unit.v
+read_verilog ../src/muxes.v
+read_verilog ../src/load_store_unit.v
+read_verilog ../src/imem_sram.v
+read_verilog ../src/dmem_sram.v
+read_verilog ../src/riscv_top_asic.v
+
+hierarchy -check -top riscv_top_asic
+
+# Hierarchical synth — preserves sub-module names in netlist
+synth -top riscv_top_asic -flatten
+
+dfflibmap -liberty $::env(PDK_LIB)
+abc -liberty $::env(PDK_LIB)
+
+clean
+write_verilog -noattr ../output/riscv_netlist_hier.v
+stat -liberty $::env(PDK_LIB)
+

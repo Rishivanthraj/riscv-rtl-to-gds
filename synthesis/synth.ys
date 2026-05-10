@@ -1,0 +1,47 @@
+# ============================================================
+# Yosys synthesis script for RV32I CPU - Sky130 target
+# Run: yosys synth.ys   (from the synthesis/ directory)
+# ============================================================
+
+# 1. Read RTL source files.
+# imem_sram and dmem_sram are synthesizable standard-cell memories in this
+# learning flow, not external hard macros. Do not read them with -lib.
+verilog_defaults -add -DSYNTHESIS
+read_verilog ../src/imem_sram.v
+read_verilog ../src/dmem_sram.v
+read_verilog ../src/alu.v
+read_verilog ../src/register_file.v
+read_verilog ../src/pc.v
+read_verilog ../src/decoder.v
+read_verilog ../src/control_unit.v
+read_verilog ../src/immediate_generator.v
+read_verilog ../src/branch_unit.v
+read_verilog ../src/muxes.v
+read_verilog ../src/load_store_unit.v
+read_verilog ../src/riscv_top_asic.v
+verilog_defaults -clear
+
+# 2. Elaborate and check hierarchy.
+hierarchy -check -top riscv_top_asic
+
+# 3. Generic synthesis.
+synth -top riscv_top_asic
+
+# 4. Technology mapping - flip-flops.
+dfflibmap -liberty $::env(PDK_LIB)
+
+# 5. Technology mapping - combinational logic.
+# -D 40000: clock period in ps (25 MHz target).
+abc -liberty $::env(PDK_LIB) -D 40000
+
+# 6. Clean up.
+clean
+opt_clean -purge
+
+# 7. Reports.
+tee -o ../output/synth_area.rpt stat -liberty $::env(PDK_LIB)
+tee -o ../output/synth_timing.rpt check
+
+# 8. Write outputs.
+write_verilog -noattr -noexpr ../output/riscv_netlist.v
+write_json ../output/riscv_synth.json

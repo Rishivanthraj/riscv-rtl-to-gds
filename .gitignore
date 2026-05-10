@@ -1,0 +1,4 @@
+dump.vcd
+*.vvp
+output/
+openlane/runs/
