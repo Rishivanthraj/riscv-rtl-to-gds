@@ -66,3 +66,7 @@ output/           → Final GDS and reports
 
 <img width="1919" height="1021" alt="Magic Layout" src="https://github.com/user-attachments/assets/c090027f-ff9f-4bbd-a3db-22097ecf94fc" />
 
+## RTL Simulation Waveform
+<img width="1919" height="1018" alt="image" src="https://github.com/user-attachments/assets/32305d68-6cb0-4430-ba78-7e8c7d5e506d" />
+
+
